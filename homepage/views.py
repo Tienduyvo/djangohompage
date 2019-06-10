@@ -12,16 +12,54 @@ from selenium import webdriver
 import time
 from .models import Stock, Histr, sStock
 import pandas as pd
-import cal.views
 
+#########################Calendar##########################
+from cal.views import *
+from cal.utils import Calendar
+from django.utils.safestring import mark_safe
+###########################################################
+
+#########################MAIL CHIMP########################
+from django.conf import settings
+import json
+import requests
+from .forms import EmailSignupForm
+from .models import Signup
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+#########################MAIL CHIMP########################
+
+
+#########################Authendification##################
+
+#########################Authendification##################
 
 
 def index(request):
-    context = {"home_page": "active"}
+    form = EmailSignupForm()
+    context = {
+        "home_page": "active", 
+        'form': form,
+        }
+
     return render(request, 'homepage/homepage.html', context)
 
 def homepage(request):
-    context = {"home_page": "active"}
+    form = EmailSignupForm()
+
+    # use today's date for the calendar
+
+    d = get_date(request.GET.get('day', None))
+
+    # Instantiate ourcalendar class with todays's year and date
+
+    cal = Calendar(d.year, d.month)
+
+    #Call the formatmonth method, which returns our calendar as a table
+    html_cal = cal.formatmonth(withyear=True)
+
+
+    context = {"home_page": "active", 'form': form, "calendar": mark_safe(html_cal),}
     return render(request, 'homepage/homepage.html', context)
 
 def example(request):
@@ -249,3 +287,35 @@ def get_history():
             print(e)
 
 
+#########################MAIL CHIMP########################
+MAILCHIMP_API_KEY = settings.MAILCHIMP_API_KEY
+MAILCHIMP_DATA_CENTER = settings.MAILCHIMP_DATA_CENTER
+MAILCHIMP_EMAIL_LIST_ID = settings.MAILCHIMP_EMAIL_LIST_ID
+
+api_url = f'https://{MAILCHIMP_DATA_CENTER}.api.mailchimp.com/3.0'
+members_endpoint = f'{api_url}/lists/{MAILCHIMP_EMAIL_LIST_ID}/members'
+
+def subscribe(email):
+    data ={
+        "email_adress": email,
+        "status": "subscribed"
+    }
+
+    r = requests.post(
+        members_endpoint,
+        auth = ("", MAILCHIMP_API_KEY),
+        data = json.dumps(data)
+    )
+    return r.status_code, r.json()
+
+def email_list_signup(request):
+    form = EmailSignupForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            email_signup_qs = Signup.objects.filter(email=form.instance.email)
+            if email_signup_qs.exists():
+                messages.info(request, "You are already subscribed")
+            else:
+                subscribe(form.instance.email)
+                form.save()
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

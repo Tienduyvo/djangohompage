@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from homepage.views import email_list_signup 
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -11,4 +12,5 @@ urlpatterns = [
     path('chemstock', views.chemstock, name='chemstock'),
     path('team/', views.team, name='team'),
     path('contact/', views.contact, name='contact'),
+    path('subscribe/', email_list_signup, name='subscribe')
 ]

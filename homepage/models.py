@@ -42,4 +42,11 @@ class sStock(models.Model):
     forFour = models.CharField(max_length=200)
     forFive = models.CharField(max_length=200)
     forSix = models.CharField(max_length=200)
+
+class Signup(models.Model):
+    email = models.EmailField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
     

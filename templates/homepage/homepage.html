@@ -12,8 +12,18 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body id="myPage"  data-target=".navbar" data-offset="60">
+
  {% include 'homepage/navbar.html' %}
  <br>
+
+ {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+ {% endif %}
+
  <div class="jumbotron text-center">
    <div class="container">
    <h1>Today I Invest</h1>
@@ -21,11 +31,11 @@
    <p>Making a wise investment in the chemical industry</p>
    <br>
    <br>
-   <form>
+   <form action = "{% url 'subscribe' %}" method = "POST">{% csrf_token %}
      <div class="input-group">
-       <input type="email" class="form-control" size="100" placeholder="Email Address" required>
+       {{ form }}
        <div class="input-group-btn">
-         <button type="button" class="btn btn-danger">Subscribe</button>
+         <button type="submit" class="btn btn-danger">Subscribe</button>
        </div>
      </div>
    </form>
@@ -72,7 +82,7 @@
   <div class="row">
     <div class="col-sm-3">
       {% load static %}
-      <span><img src="{% static 'homepage/Huntsman.jpg'%}" style="width: 250px; height: 250px"></span>
+      <span><img src="{% static 'homepage/Huntsman.png'%}" style="width: 250px; height: 250px"></span>
     </div>
     <div class="col-sm-8">
       <h4>Huntsman: A Reasonable Choice</h4><br>
@@ -100,6 +110,8 @@
   </div>
 </div>
 <br>
+
+
 <div id="contact" class="container-fluid ">
   <div class="container">
   <h2 class="text-center">CONTACT</h2>
@@ -108,7 +120,7 @@
       <p>Contact us and we'll get back to you within 24 hours.</p>
       <p><span class="glyphicon glyphicon-map-marker"></span> Some Place, Earth</p>
       <p><span class="glyphicon glyphicon-phone"></span> +00 1515151515</p>
-      <p><span class="glyphicon glyphicon-envelope"></span> myemail@something.com</p>
+      <p><span class="glyphicon glyphicon-envelope"></span> vo_duy_tien@yahoo.de</p>
     </div>
     <div class="col-sm-7 slideanim">
       <div class="row">
@@ -130,6 +142,13 @@
   </div>
 </div>
 
+<div class= "container">
+   {{ calendar }}
+    
+    
+</div>
+
+<br>
 
 
 </body>

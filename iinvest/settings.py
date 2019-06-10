@@ -126,3 +126,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#########################MAIL CHIMP########################
+MAILCHIMP_API_KEY='d92ce78ee163723800353bfc62206d6c-us20'
+MAILCHIMP_DATA_CENTER='us20'
+MAILCHIMP_EMAIL_LIST_ID='158d04add8'
+#########################MAIL CHIMP########################
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
